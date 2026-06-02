@@ -79,7 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var cost = parseFloat(modalCost.value);
         var cycle = modalCycle.value;
         if (!name) { showToast('Please enter a subscription name', 'error'); return; }
-        if (isNaN(cost) || cost <= 0) { showToast('Please enter a valid amount', 'error'); return; }
+        if (isNaN(cost) || cost <= 0 || cost > 10000) { showToast('Please enter a valid amount', 'error'); return; }
+        if (name.length > 50) { showToast('Name too long', 'error'); return; }
         if (editId !== null) {
             subscriptions[editId].name = name;
             subscriptions[editId].originalCost = cost;
