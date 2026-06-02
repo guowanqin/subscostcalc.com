@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var subscriptions = loadSubscriptions();
     var listEl = document.getElementById('subscriptions-list');
     var emptyEl = document.getElementById('empty-state');
-    var resultsEl = document.getElementById('results-card');
     var addBtn = document.getElementById('add-btn');
     var exampleBtn = document.getElementById('example-btn');
     var monthlyEl = document.getElementById('monthly-total');
@@ -137,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
             saveSubscriptions();
             listEl.innerHTML = '';
             emptyEl.style.display = 'none';
-            resultsEl.style.display = 'block';
+            
             for (var i = 0; i < subscriptions.length; i++) {
                 var sub = subscriptions[i];
                 var div = document.createElement('div');
@@ -166,13 +165,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subscriptions.length === 0) {
             emptyEl.style.display = 'block';
             if (quickAddSection) quickAddSection.style.display = 'block';
-            resultsEl.style.display = 'none';
+            
             if (exportBtn) exportBtn.style.display = 'none';
             return;
         }
         emptyEl.style.display = 'none';
         if (quickAddSection) quickAddSection.style.display = 'none';
-        resultsEl.style.display = 'block';
+        
         if (exportBtn) exportBtn.style.display = '';
         for (var i = 0; i < subscriptions.length; i++) {
             var sub = subscriptions[i];
