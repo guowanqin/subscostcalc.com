@@ -28,12 +28,19 @@ document.addEventListener('DOMContentLoaded', function() {
             var sub = subscriptions[i];
             var div = document.createElement('div');
             div.className = 'sub-item';
-            div.innerHTML = '<input type="text" placeholder="Service name (e.g. Netflix)" value="' + sub.name + '" oninput="updateSub(' + i + ', 'name', this.value)">' +
-                '<input type="number" placeholder="Monthly $" step="0.01" min="0" value="' + sub.price + '" oninput="updateSub(' + i + ', 'price', parseFloat(this.value) || 0)">' +
+            // Use single quotes for attribute values to avoid conflict with inner JS strings
+            div.innerHTML = '<input type="text" placeholder="Service name (e.g. Netflix)" value="' + escHtml(sub.name) + '" oninput="updateSub(' + i + ', \'name\', this.value)">' +
+                '<input type="number" placeholder="Monthly $" step="0.01" min="0" value="' + sub.price + '" oninput="updateSub(' + i + ', \'price\', parseFloat(this.value) || 0)">' +
                 '<button class="btn btn-danger" onclick="removeSub(' + i + ')">Remove</button>';
             listEl.appendChild(div);
         }
         calculate();
+    }
+
+    function escHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
     }
 
     window.updateSub = function(index, field, value) {
@@ -62,9 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
             var msgs = [];
             if (monthly < 50) msgs.push('Nice! You spend less than $50/mo on subscriptions.');
             else if (monthly < 150) msgs.push('Moderate subscription spending. Keep an eye on unused services.');
-            else if (monthly < 300) msgs.push('At $' + monthly.toFixed(0) + '/mo, you're close to the average. Review each one.');
+            else if (monthly < 300) msgs.push('At $' + monthly.toFixed(0) + '/mo, you\'re close to the average. Review each one.');
             else msgs.push('At $' + monthly.toFixed(0) + '/mo, you could save $' + (monthly - 150).toFixed(0) + '/mo by cutting unused subscriptions.');
-            msgs.push('Over 5 years, that's <strong>$' + fiveYear.toFixed(0)</strong> total.');
+            msgs.push('Over 5 years, that\'s <strong>$' + fiveYear.toFixed(0) + '</strong> total.');
             insightEl.innerHTML = msgs.join(' ');
         } else {
             insightEl.innerHTML = '';
