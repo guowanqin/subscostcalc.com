@@ -251,26 +251,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    var quickAddBtns = document.querySelectorAll('.quick-add-btn');
-    for (var i = 0; i < quickAddBtns.length; i++) {
-        (function(btn) {
-            btn.addEventListener('click', function() {
-                var name = btn.getAttribute('data-name');
-                var cost = parseFloat(btn.getAttribute('data-cost'));
-                var cycle = btn.getAttribute('data-cycle') || 'monthly';
-                var exists = false;
-                for (var j = 0; j < subscriptions.length; j++) {
-                    if (subscriptions[j].name.toLowerCase() === name.toLowerCase()) { exists = true; break; }
-                }
-                if (exists) { showToast(name + ' already added', 'error'); return; }
-                subscriptions.push({
-                    name: name, originalCost: cost, cycle: cycle, monthlyCost: toMonthly(cost, cycle)
-                });
-                saveSubscriptions();
-                render();
-                showToast(name + ' added!');
+    if (quickAddSection) {
+        quickAddSection.addEventListener('click', function(e) {
+            var btn = e.target.closest('.quick-add-btn');
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var name = btn.getAttribute('data-name');
+            var cost = parseFloat(btn.getAttribute('data-cost'));
+            var cycle = btn.getAttribute('data-cycle') || 'monthly';
+            var exists = false;
+            for (var j = 0; j < subscriptions.length; j++) {
+                if (subscriptions[j].name.toLowerCase() === name.toLowerCase()) { exists = true; break; }
+            }
+            if (exists) { showToast(name + ' already added', 'error'); return; }
+            subscriptions.push({
+                name: name, originalCost: cost, cycle: cycle, monthlyCost: toMonthly(cost, cycle)
             });
-        })(quickAddBtns[i]);
+            saveSubscriptions();
+            render();
+            showToast(name + ' added!');
+        });
     }
 
     var faqItems = document.querySelectorAll('.faq-item');
