@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Cost Calculator — Track Your Monthly Spending</title>
+    <meta name="description" content="Free subscription cost calculator. See exactly how much you spend on Netflix, Spotify, ChatGPT and more.">
+    <meta name="keywords" content="subscription calculator, subscription cost calculator, monthly spending tracker">
+    <link rel="canonical" href="https://subscostcalc.com/">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Subscription Cost Calculator","description":"Calculate your total subscription costs across monthly, yearly, and 5-year periods.","url":"https://subscostcalc.com/","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <h1>Subscription Cost Calculator</h1>
+            <p class="subtitle">See exactly how much you spend on subscriptions each month, year, and beyond.</p>
+        </div>
+    </header>
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Your Subscriptions</h2>
+                <button id="add-btn" class="btn btn-primary">+ Add Subscription</button>
+            </div>
+            <div id="subscriptions-list" class="subscriptions-list"></div>
+            <div id="empty-state" class="empty-state">
+                <p>No subscriptions added yet. Click <strong>+ Add Subscription</strong> to start tracking!</p>
+            </div>
+        </div>
+        <div id="results-card" class="card results-card" style="display: none;">
+            <h2>Total Cost Breakdown</h2>
+            <div class="cost-grid">
+                <div class="cost-item"><span class="cost-label">Monthly Total</span><span class="cost-value monthly" id="monthly-total">$0.00</span></div>
+                <div class="cost-item"><span class="cost-label">Yearly Total</span><span class="cost-value yearly" id="yearly-total">$0.00</span></div>
+                <div class="cost-item"><span class="cost-label">5-Year Total</span><span class="cost-value five-year" id="five-year-total">$0.00</span></div>
+            </div>
+            <div class="insight" id="insight-text"></div>
+        </div>
+        <section class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item"><h3>How do I use the Subscription Cost Calculator?</h3><p>Simply add each subscription with its name and monthly cost. The calculator automatically shows your monthly, yearly, and 5-year totals.</p></div>
+            <div class="faq-item"><h3>How much does the average person spend on subscriptions?</h3><p>Studies show the average person spends <strong>$219 per month</strong> on subscriptions — that's over <strong>$2,600 per year</strong> and <strong>$13,000 over 5 years</strong>!</p></div>
+            <div class="faq-item"><h3>Is my data stored?</h3><p>No. This calculator runs entirely in your browser. Your subscription data stays on your device.</p></div>
+            <div class="faq-item"><h3>Can I add subscriptions billed annually?</h3><p>Yes! Just enter the annual cost divided by 12 as your monthly amount.</p></div>
+            <div class="faq-item"><h3>What subscriptions should I track?</h3><p>Track everything recurring: Netflix, Spotify, ChatGPT, Adobe, cloud storage, gym memberships, and any other monthly subscription.</p></div>
+        </section>
+        <section class="popular-section">
+            <h2>Popular Subscriptions to Track</h2>
+            <div class="popular-grid">
+                <div class="popular-item"><span class="popular-name">Netflix</span> <span class="popular-price">$6.99 - $22.99/mo</span></div>
+                <div class="popular-item"><span class="popular-name">Spotify</span> <span class="popular-price">$2.99 - $16.99/mo</span></div>
+                <div class="popular-item"><span class="popular-name">ChatGPT Plus</span> <span class="popular-price">$20.00/mo</span></div>
+                <div class="popular-item"><span class="popular-name">YouTube Premium</span> <span class="popular-price">$13.99/mo</span></div>
+                <div class="popular-item"><span class="popular-name">Amazon Prime</span> <span class="popular-price">$14.99/mo</span></div>
+                <div class="popular-item"><span class="popular-name">Adobe Creative Cloud</span> <span class="popular-price">$54.99/mo</span></div>
+                <div class="popular-item"><span class="popular-name">Microsoft 365</span> <span class="popular-price">$9.99 - $12.99/mo</span></div>
+                <div class="popular-item"><span class="popular-name">Disney+</span> <span class="popular-price">$2.99 - $15.99/mo</span></div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Subscostcalc.com — Free Subscription Cost Calculator. No signup, no ads, no data stored.</p>
+        </div>
+    </footer>
+    <script src="js/app.js"></script>
+</body>
+</html>
