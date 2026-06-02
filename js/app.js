@@ -1,4 +1,49 @@
 document.addEventListener('DOMContentLoaded', function() {
+    
+// Global quickAddService for inline onclick handlers
+window.quickAddService = function(name, cost, cycle, category) {
+    try {
+        var subs = JSON.parse(localStorage.getItem('subscostcalc_subs') || '[]');
+        for (var i = 0; i < subs.length; i++) {
+            if (subs[i].name.toLowerCase() === name.toLowerCase()) {
+                alert(name + ' already added!');
+                return;
+            }
+        }
+        var monthly = cycle === 'yearly' ? cost / 12 : cost;
+        subs.push({ name: name, originalCost: cost, cycle: cycle, monthlyCost: monthly, category: category });
+        localStorage.setItem('subscostcalc_subs', JSON.stringify(subs));
+        
+        var listEl = document.getElementById('subscriptions-list');
+        var emptyEl = document.getElementById('empty-state');
+        if (emptyEl) emptyEl.style.display = 'none';
+        
+        var div = document.createElement('div');
+        div.className = 'sub-card';
+        var cycleText = cycle === 'yearly' ? 'Yearly: $' + cost.toFixed(2) + ' (~$' + monthly.toFixed(2) + '/mo)' : 'Monthly: $' + cost.toFixed(2);
+        div.innerHTML = '<div class="sub-header"><span class="sub-name">' + name + '</span><span class="sub-cost">$' + monthly.toFixed(2) + '/mo</span></div><div class="sub-details">' + cycleText + '</div><div class="sub-actions"><button class="btn btn-outline" onclick="editSub(' + subs.length + '-1)">Edit</button><button class="btn btn-danger" onclick="removeSub(' + subs.length + '-1)">Remove</button></div>';
+        listEl.appendChild(div);
+        
+        var totalMonthly = 0;
+        for (var j = 0; j < subs.length; j++) totalMonthly += subs[j].monthlyCost;
+        var monthlyEl = document.getElementById('monthly-total');
+        var yearlyEl = document.getElementById('yearly-total');
+        var fiveYearEl = document.getElementById('five-year-total');
+        var insightEl = document.getElementById('insight-text');
+        if (monthlyEl) monthlyEl.textContent = '$' + totalMonthly.toFixed(2);
+        if (yearlyEl) yearlyEl.textContent = '$' + (totalMonthly * 12).toFixed(2);
+        if (fiveYearEl) fiveYearEl.textContent = '$' + (totalMonthly * 12 * 5).toFixed(2);
+        if (insightEl) insightEl.textContent = 'You spend $' + (totalMonthly * 12).toFixed(2) + ' per year on subscriptions!';
+        
+        var exportBtn = document.getElementById('export-btn');
+        if (exportBtn) exportBtn.style.display = 'inline-block';
+        
+        alert(name + ' added! Monthly: $' + monthly.toFixed(2));
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+};
+
     var STORAGE_KEY = 'subscostcalc_subs';
     var subscriptions = loadSubscriptions();
     var listEl = document.getElementById('subscriptions-list');
