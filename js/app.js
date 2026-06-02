@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var editId = null;
     var toastEl = document.getElementById('toast');
     var exportBtn = document.getElementById('export-btn');
+    var quickAddSection = document.getElementById('quick-add-section');
+    var emptyStateEl = document.getElementById('empty-state');
 
     function showToast(msg, type) {
         type = type || 'success';
@@ -163,11 +165,13 @@ document.addEventListener('DOMContentLoaded', function() {
         listEl.innerHTML = '';
         if (subscriptions.length === 0) {
             emptyEl.style.display = 'block';
+            if (quickAddSection) quickAddSection.style.display = 'block';
             resultsEl.style.display = 'none';
             if (exportBtn) exportBtn.style.display = 'none';
             return;
         }
         emptyEl.style.display = 'none';
+        if (quickAddSection) quickAddSection.style.display = 'none';
         resultsEl.style.display = 'block';
         if (exportBtn) exportBtn.style.display = '';
         for (var i = 0; i < subscriptions.length; i++) {
@@ -189,6 +193,12 @@ document.addEventListener('DOMContentLoaded', function() {
             listEl.appendChild(div);
         }
         calculate();
+    }
+
+    function escHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
     }
 
     window.editSub = function(id) {
