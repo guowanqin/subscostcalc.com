@@ -122,7 +122,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (exampleBtn) {
         exampleBtn.addEventListener('click', function() {
-            subscriptions = examples.map(function(e) {
+            subscriptions = [];
+            var demo = examples.map(function(e) {
                 return {
                     name: e.name,
                     originalCost: e.cost,
@@ -130,8 +131,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     monthlyCost: toMonthly(e.cost, e.cycle)
                 };
             });
+            subscriptions = demo;
             saveSubscriptions();
-            render();
+            listEl.innerHTML = '';
+            emptyEl.style.display = 'none';
+            resultsEl.style.display = 'block';
+            for (var i = 0; i < subscriptions.length; i++) {
+                var sub = subscriptions[i];
+                var div = document.createElement('div');
+                div.className = 'sub-card';
+                var cycleText = sub.cycle === 'yearly' ? 
+                    'Yearly: $' + sub.originalCost.toFixed(2) + ' (\u2248$' + sub.monthlyCost.toFixed(2) + '/mo)' :
+                    'Monthly: $' + sub.originalCost.toFixed(2);
+                div.innerHTML = '<div class="sub-info">' +
+                    '<span class="sub-name">' + escHtml(sub.name) + '</span>' +
+                    '<span class="sub-price">$' + sub.monthlyCost.toFixed(2) + '/mo</span>' +
+                    '<span class="sub-detail">' + cycleText + '</span>' +
+                    '</div>' +
+                    '<div class="sub-actions">' +
+                    '<button class="btn-edit" onclick="editSub(' + i + ')" title="Edit">\u270f</button>' +
+                    '<button class="btn-delete" onclick="removeSub(' + i + ')" title="Delete">\u1f5d1</button>' +
+                    '</div>';
+                listEl.appendChild(div);
+            }
+            calculate();
             showToast('Example subscriptions loaded!');
         });
     }
@@ -141,10 +164,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subscriptions.length === 0) {
             emptyEl.style.display = 'block';
             resultsEl.style.display = 'none';
+            if (exportBtn) exportBtn.style.display = 'none';
             return;
         }
         emptyEl.style.display = 'none';
         resultsEl.style.display = 'block';
+        if (exportBtn) exportBtn.style.display = '';
         for (var i = 0; i < subscriptions.length; i++) {
             var sub = subscriptions[i];
             var div = document.createElement('div');
