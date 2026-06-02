@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="description" content="Free Subscription Cost Calculator 2026. Track your Netflix, Spotify, ChatGPT, Claude Pro, Gemini, and all subscription spending. See monthly, yearly & 5-year totals. 100% private, no signup required.">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Free Subscription Cost Calculator | Track Monthly, Yearly &amp; 5-Year Spending</title>
@@ -58,15 +59,53 @@
       </div>
       <div id="quick-add-section" class="quick-add-section">
         <h3>Quick Add Popular Services</h3>
-        <div class="quick-add-grid">
-          <button type="button" class="quick-add-btn" data-name="Netflix" data-cost="22.99" data-cycle="monthly"><strong>Netflix</strong>$22.99/mo</button>
-          <button type="button" class="quick-add-btn" data-name="Spotify" data-cost="16.99" data-cycle="monthly"><strong>Spotify</strong>$16.99/mo</button>
-          <button type="button" class="quick-add-btn" data-name="ChatGPT Plus" data-cost="20.00" data-cycle="monthly"><strong>ChatGPT</strong>$20.00/mo</button>
-          <button type="button" class="quick-add-btn" data-name="YouTube Premium" data-cost="13.99" data-cycle="monthly"><strong>YouTube</strong>$13.99/mo</button>
-          <button type="button" class="quick-add-btn" data-name="Adobe CC" data-cost="599.88" data-cycle="yearly"><strong>Adobe CC</strong>$599.88/yr</button>
-          <button type="button" class="quick-add-btn" data-name="Amazon Prime" data-cost="14.99" data-cycle="monthly"><strong>Amazon Prime</strong>$14.99/mo</button>
-          <button type="button" class="quick-add-btn" data-name="Disney+" data-cost="107.99" data-cycle="yearly"><strong>Disney+</strong>$107.99/yr</button>
-          <button type="button" class="quick-add-btn" data-name="Microsoft 365" data-cost="99.99" data-cycle="yearly"><strong>Microsoft 365</strong>$99.99/yr</button>
+        <input type="text" id="quick-add-search" placeholder="Search services..." autocomplete="off">
+        <div class="quick-add-tabs">
+          <button class="tab-btn active" data-tab="all">All</button>
+          <button class="tab-btn" data-tab="streaming">Streaming</button>
+          <button class="tab-btn" data-tab="music">Music</button>
+          <button class="tab-btn" data-tab="ai">AI Tools</button>
+          <button class="tab-btn" data-tab="productivity">Productivity</button>
+          <button class="tab-btn" data-tab="cloud">Cloud</button>
+          <button class="tab-btn" data-tab="news">News</button>
+        </div>
+        <div class="quick-add-grid" id="quick-add-list">
+          <!-- Streaming -->
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="Netflix" data-cost="22.99" data-cycle="monthly"><span class="qa-icon">📺</span><strong>Netflix</strong> $22.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="Hulu" data-cost="17.99" data-cycle="monthly"><span class="qa-icon">📺</span><strong>Hulu</strong> $17.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="Max (HBO)" data-cost="15.99" data-cycle="monthly"><span class="qa-icon">📺</span><strong>Max</strong> $15.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="Amazon Prime Video" data-cost="14.99" data-cycle="monthly"><span class="qa-icon">📺</span><strong>Prime Video</strong> $14.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="Disney+" data-cost="107.99" data-cycle="yearly"><span class="qa-icon">📺</span><strong>Disney+</strong> $107.99/yr</button>
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="YouTube Premium" data-cost="13.99" data-cycle="monthly"><span class="qa-icon">📺</span><strong>YouTube</strong> $13.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="Paramount+" data-cost="11.99" data-cycle="monthly"><span class="qa-icon">📺</span><strong>Paramount+</strong> $11.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="Peacock" data-cost="13.99" data-cycle="monthly"><span class="qa-icon">📺</span><strong>Peacock</strong> $13.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="streaming" data-name="Apple TV+" data-cost="9.99" data-cycle="monthly"><span class="qa-icon">📺</span><strong>Apple TV+</strong> $9.99/mo</button>
+          <!-- Music -->
+          <button type="button" class="quick-add-btn" data-category="music" data-name="Spotify" data-cost="16.99" data-cycle="monthly"><span class="qa-icon">🎵</span><strong>Spotify</strong> $16.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="music" data-name="Apple Music" data-cost="10.99" data-cycle="monthly"><span class="qa-icon">🎵</span><strong>Apple Music</strong> $10.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="music" data-name="Amazon Music" data-cost="9.99" data-cycle="monthly"><span class="qa-icon">🎵</span><strong>Amazon Music</strong> $9.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="music" data-name="Tidal" data-cost="10.99" data-cycle="monthly"><span class="qa-icon">🎵</span><strong>Tidal</strong> $10.99/mo</button>
+          <!-- AI Tools -->
+          <button type="button" class="quick-add-btn" data-category="ai" data-name="ChatGPT Plus" data-cost="20.00" data-cycle="monthly"><span class="qa-icon">🤖</span><strong>ChatGPT</strong> $20.00/mo</button>
+          <button type="button" class="quick-add-btn" data-category="ai" data-name="Claude Pro" data-cost="20.00" data-cycle="monthly"><span class="qa-icon">🤖</span><strong>Claude Pro</strong> $20.00/mo</button>
+          <button type="button" class="quick-add-btn" data-category="ai" data-name="Gemini Advanced" data-cost="19.99" data-cycle="monthly"><span class="qa-icon">🤖</span><strong>Gemini</strong> $19.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="ai" data-name="Perplexity Pro" data-cost="20.00" data-cycle="monthly"><span class="qa-icon">🤖</span><strong>Perplexity</strong> $20.00/mo</button>
+          <button type="button" class="quick-add-btn" data-category="ai" data-name="Grok SuperGrok" data-cost="30.00" data-cycle="monthly"><span class="qa-icon">🤖</span><strong>Grok</strong> $30.00/mo</button>
+          <button type="button" class="quick-add-btn" data-category="ai" data-name="Midjourney" data-cost="60.00" data-cycle="monthly"><span class="qa-icon">🎨</span><strong>Midjourney</strong> $60.00/mo</button>
+          <button type="button" class="quick-add-btn" data-category="ai" data-name="Adobe CC" data-cost="599.88" data-cycle="yearly"><span class="qa-icon">🎨</span><strong>Adobe CC</strong> $599.88/yr</button>
+          <button type="button" class="quick-add-btn" data-category="ai" data-name="Canva Pro" data-cost="12.99" data-cycle="monthly"><span class="qa-icon">🎨</span><strong>Canva</strong> $12.99/mo</button>
+          <!-- Productivity -->
+          <button type="button" class="quick-add-btn" data-category="productivity" data-name="Notion Plus" data-cost="10.00" data-cycle="monthly"><span class="qa-icon">📝</span><strong>Notion</strong> $10.00/mo</button>
+          <button type="button" class="quick-add-btn" data-category="productivity" data-name="Microsoft 365" data-cost="99.99" data-cycle="yearly"><span class="qa-icon">📝</span><strong>Microsoft 365</strong> $99.99/yr</button>
+          <button type="button" class="quick-add-btn" data-category="productivity" data-name="Figma" data-cost="12.00" data-cycle="monthly"><span class="qa-icon">📝</span><strong>Figma</strong> $12.00/mo</button>
+          <button type="button" class="quick-add-btn" data-category="productivity" data-name="Slack Pro" data-cost="15.00" data-cycle="monthly"><span class="qa-icon">📝</span><strong>Slack</strong> $15.00/mo</button>
+          <!-- Cloud -->
+          <button type="button" class="quick-add-btn" data-category="cloud" data-name="Google One" data-cost="2.99" data-cycle="monthly"><span class="qa-icon">☁️</span><strong>Google One</strong> $2.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="cloud" data-name="iCloud+" data-cost="2.99" data-cycle="monthly"><span class="qa-icon">☁️</span><strong>iCloud+</strong> $2.99/mo</button>
+          <button type="button" class="quick-add-btn" data-category="cloud" data-name="Dropbox Plus" data-cost="9.99" data-cycle="monthly"><span class="qa-icon">☁️</span><strong>Dropbox</strong> $9.99/mo</button>
+          <!-- News -->
+          <button type="button" class="quick-add-btn" data-category="news" data-name="NYT" data-cost="16.00" data-cycle="monthly"><span class="qa-icon">📰</span><strong>NYT</strong> $16.00/mo</button>
+          <button type="button" class="quick-add-btn" data-category="news" data-name="Substack" data-cost="12.00" data-cycle="monthly"><span class="qa-icon">📰</span><strong>Substack</strong> $12.00/mo</button>
         </div>
       </div>
     </div>

@@ -22,7 +22,16 @@ document.addEventListener('DOMContentLoaded', function() {
     var toastEl = document.getElementById('toast');
     var exportBtn = document.getElementById('export-btn');
     var quickAddSection = document.getElementById('quick-add-section');
-    var emptyStateEl = document.getElementById('empty-state');
+    var quickAddSearch = document.getElementById('quick-add-search');
+    var chartContainer = document.getElementById('chart-container');
+    var compareEl = document.getElementById('compare-el');
+    var savingsEl = document.getElementById('savings-el');
+    var categoryMap = {
+        'Streaming': 'streaming', 'Music': 'music', 'AI Tools': 'ai',
+        'Productivity': 'productivity', 'Cloud': 'cloud', 'News': 'news'
+    };
+    var reverseCategory = {};
+    for (var k in categoryMap) { reverseCategory[categoryMap[k]] = k; }
 
     function showToast(msg, type) {
         type = type || 'success';
@@ -89,9 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showToast('Subscription updated!');
         } else {
             subscriptions.push({
-                name: name,
-                originalCost: cost,
-                cycle: cycle,
+                name: name, originalCost: cost, cycle: cycle,
                 monthlyCost: toMonthly(cost, cycle)
             });
             showToast('Subscription added!');
@@ -114,71 +121,59 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Deleted ' + name, 'error');
     }
 
+    function escHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
+    window.editSub = function(id) { openEditModal(id); };
+    window.removeSub = function(id) { removeSub(id); };
+
+    window.swapSub = function(id) {
+        var sub = subscriptions[id];
+        editId = id;
+        modalTitle.textContent = 'Swap ' + sub.name;
+        modalName.value = sub.name;
+        modalCost.value = sub.originalCost;
+        modalCycle.value = sub.cycle;
+        modalOverlay.style.display = 'flex';
+        modalName.focus();
+    };
+
     var examples = [
-        { name: 'Netflix', cost: 22.99, cycle: 'monthly' },
-        { name: 'Spotify', cost: 16.99, cycle: 'monthly' },
-        { name: 'ChatGPT Plus', cost: 20.00, cycle: 'monthly' },
-        { name: 'YouTube Premium', cost: 13.99, cycle: 'monthly' },
-        { name: 'Adobe Creative Cloud', cost: 599.88, cycle: 'yearly' }
+        { name: 'Netflix', cost: 22.99, cycle: 'monthly', category: 'streaming' },
+        { name: 'Spotify', cost: 16.99, cycle: 'monthly', category: 'music' },
+        { name: 'ChatGPT Plus', cost: 20.00, cycle: 'monthly', category: 'ai' },
+        { name: 'YouTube Premium', cost: 13.99, cycle: 'monthly', category: 'streaming' },
+        { name: 'Adobe Creative Cloud', cost: 599.88, cycle: 'yearly', category: 'ai' }
     ];
 
     if (exampleBtn) {
         exampleBtn.addEventListener('click', function() {
-            subscriptions = [];
             var demo = examples.map(function(e) {
                 return {
-                    name: e.name,
-                    originalCost: e.cost,
-                    cycle: e.cycle,
-                    monthlyCost: toMonthly(e.cost, e.cycle)
+                    name: e.name, originalCost: e.cost, cycle: e.cycle,
+                    monthlyCost: toMonthly(e.cost, e.cycle), category: e.category
                 };
             });
             subscriptions = demo;
             saveSubscriptions();
             listEl.innerHTML = '';
             emptyEl.style.display = 'none';
-            
-            for (var i = 0; i < subscriptions.length; i++) {
-                var sub = subscriptions[i];
-                var div = document.createElement('div');
-                div.className = 'sub-card';
-                var cycleText = sub.cycle === 'yearly' ? 
-                    'Yearly: $' + sub.originalCost.toFixed(2) + ' (\u2248$' + sub.monthlyCost.toFixed(2) + '/mo)' :
-                    'Monthly: $' + sub.originalCost.toFixed(2);
-                div.innerHTML = '<div class="sub-info">' +
-                    '<span class="sub-name">' + escHtml(sub.name) + '</span>' +
-                    '<span class="sub-price">$' + sub.monthlyCost.toFixed(2) + '/mo</span>' +
-                    '<span class="sub-detail">' + cycleText + '</span>' +
-                    '</div>' +
-                    '<div class="sub-actions">' +
-                    '<button class="btn-edit" onclick="editSub(' + i + ')" title="Edit">\u270f</button>' +
-                    '<button class="btn-delete" onclick="removeSub(' + i + ')" title="Delete">\u1f5d1</button>' +
-                    '</div>';
-                listEl.appendChild(div);
-            }
+            if (quickAddSection) quickAddSection.style.display = 'none';
+            buildCards();
             calculate();
             showToast('Example subscriptions loaded!');
         });
     }
 
-    function render() {
-        listEl.innerHTML = '';
-        if (subscriptions.length === 0) {
-            emptyEl.style.display = 'block';
-            if (quickAddSection) quickAddSection.style.display = 'block';
-            
-            if (exportBtn) exportBtn.style.display = 'none';
-            return;
-        }
-        emptyEl.style.display = 'none';
-        if (quickAddSection) quickAddSection.style.display = 'none';
-        
-        if (exportBtn) exportBtn.style.display = '';
+    function buildCards() {
         for (var i = 0; i < subscriptions.length; i++) {
             var sub = subscriptions[i];
             var div = document.createElement('div');
             div.className = 'sub-card';
-            var cycleText = sub.cycle === 'yearly' ? 
+            var cycleText = sub.cycle === 'yearly' ?
                 'Yearly: $' + sub.originalCost.toFixed(2) + ' (≈$' + sub.monthlyCost.toFixed(2) + '/mo)' :
                 'Monthly: $' + sub.originalCost.toFixed(2);
             div.innerHTML = '<div class="sub-info">' +
@@ -189,32 +184,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<div class="sub-actions">' +
                 '<button class="btn-edit" onclick="editSub(' + i + ')" title="Edit">&#9998;</button>' +
                 '<button class="btn-delete" onclick="removeSub(' + i + ')" title="Delete">&#128465;</button>' +
+                '<button class="btn-swap" onclick="swapSub(' + i + ')" title="Swap">&#x21bb;</button>' +
                 '</div>';
             listEl.appendChild(div);
         }
+    }
+
+    function render() {
+        listEl.innerHTML = '';
+        if (subscriptions.length === 0) {
+            emptyEl.style.display = 'block';
+            if (quickAddSection) quickAddSection.style.display = 'block';
+            if (compareEl) compareEl.style.display = 'none';
+            if (chartContainer) chartContainer.style.display = 'none';
+            if (savingsEl) savingsEl.style.display = 'none';
+            if (exportBtn) exportBtn.style.display = 'none';
+            return;
+        }
+        emptyEl.style.display = 'none';
+        if (quickAddSection) quickAddSection.style.display = 'none';
+        if (exportBtn) exportBtn.style.display = '';
+        buildCards();
         calculate();
     }
 
-    function escHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
-    }
-
-    window.editSub = function(id) {
-        openEditModal(id);
-    };
-
     function calculate() {
         var monthly = 0;
+        var catTotals = {};
+        for (var k in categoryMap) { catTotals[k] = 0; }
         for (var i = 0; i < subscriptions.length; i++) {
-            monthly += subscriptions[i].monthlyCost || 0;
+            var sub = subscriptions[i];
+            monthly += sub.monthlyCost || 0;
+            var cat = sub.category || 'Streaming';
+            if (catTotals[cat] === undefined) {
+                catTotals['Other'] = (catTotals['Other'] || 0) + sub.monthlyCost;
+            } else {
+                catTotals[cat] += sub.monthlyCost;
+            }
         }
         var yearly = monthly * 12;
         var fiveYear = yearly * 5;
         monthlyEl.textContent = '$' + monthly.toFixed(2);
         yearlyEl.textContent = '$' + yearly.toFixed(2);
         fiveYearEl.textContent = '$' + fiveYear.toFixed(2);
+
+        // Insight text
         if (monthly > 0) {
             var msgs = [];
             if (monthly < 50) msgs.push('Nice! You spend less than $50/mo on subscriptions.');
@@ -226,32 +240,59 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             insightEl.innerHTML = '';
         }
-    }
 
-    if (exportBtn) {
-        exportBtn.addEventListener('click', function() {
-            if (subscriptions.length === 0) { showToast('No subscriptions to export', 'error'); return; }
-            var csv = 'Name,Billing Cycle,Original Cost,Monthly Cost\n';
-            for (var i = 0; i < subscriptions.length; i++) {
-                var s = subscriptions[i];
-                csv += '"' + s.name.replace(/"/g, '""') + '",' + s.cycle + ',' + s.originalCost.toFixed(2) + ',' + s.monthlyCost.toFixed(2) + '\n';
+        // Compare with average $219
+        if (compareEl && monthly > 0) {
+            var diff = monthly - 219;
+            var pct = Math.round(Math.abs(diff) / 219 * 100);
+            if (diff < 0) {
+                compareEl.innerHTML = 'You spend <span class="amount">$' + Math.abs(diff).toFixed(0) + ' less</span> per month than the average ($219). <span class="amount">-' + pct + '%</span>. Great job!';
+            } else {
+                compareEl.innerHTML = 'You spend <span class="amount">$' + diff.toFixed(0) + ' more</span> per month than average ($219). <span class="amount">+' + pct + '%</span>. Review subscriptions?';
             }
-            var monthly = subscriptions.reduce(function(a, b) { return a + (b.monthlyCost || 0); }, 0);
-            csv += '\nSummary\n';
-            csv += 'Monthly Total,' + monthly.toFixed(2) + '\n';
-            csv += 'Yearly Total,' + (monthly * 12).toFixed(2) + '\n';
-            csv += '5-Year Total,' + (monthly * 60).toFixed(2) + '\n';
-            var blob = new Blob([csv], { type: 'text/csv' });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'subscriptions-' + new Date().toISOString().slice(0,10) + '.csv';
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Exported to CSV!');
-        });
+            compareEl.style.display = 'block';
+        }
+
+        // Category chart
+        if (chartContainer && subscriptions.length > 1) {
+            var html = '<h4>Spending by Category</h4>';
+            var sorted = [];
+            for (var k in catTotals) {
+                if (catTotals[k] > 0) sorted.push({cat: k, total: catTotals[k]});
+            }
+            sorted.sort(function(a,b) { return b.total - a.total; });
+            var maxVal = sorted.length > 0 ? sorted[0].total : 1;
+            for (var i = 0; i < sorted.length; i++) {
+                var s = sorted[i];
+                var barPct = Math.round(s.total / maxVal * 100);
+                var subPct = monthly > 0 ? Math.round(s.total / monthly * 100) : 0;
+                var catClass = categoryMap[s.cat] || 'productivity';
+                html += '<div class="chart-bar-row">' +
+                    '<span class="chart-bar-label">' + s.cat + '</span>' +
+                    '<div class="chart-bar"><div class="chart-bar-fill ' + catClass + '" style="width:' + barPct + '%"></div></div>' +
+                    '<span class="chart-bar-value">$' + s.total.toFixed(0) + '/' + subPct + '%</span>' +
+                    '</div>';
+            }
+            chartContainer.innerHTML = html;
+            chartContainer.style.display = 'block';
+        }
+
+        // Savings tip
+        if (savingsEl) {
+            var tip = '';
+            if (monthly > 200) {
+                tip = '💡 Tip: Cancel 2 unused subscriptions to save ~$30/mo. Over 5 years that's <strong>$1,800</strong>!';
+            } else if (monthly > 100) {
+                tip = '💡 Tip: Consider yearly billing for services you use daily. Most save 15-20%.';
+            } else {
+                tip = '✅ You're below average! Keep monitoring for unused subscriptions.';
+            }
+            savingsEl.innerHTML = tip;
+            savingsEl.style.display = 'block';
+        }
     }
 
+    // Quick Add event delegation
     if (quickAddSection) {
         quickAddSection.addEventListener('click', function(e) {
             var btn = e.target.closest('.quick-add-btn');
@@ -261,13 +302,15 @@ document.addEventListener('DOMContentLoaded', function() {
             var name = btn.getAttribute('data-name');
             var cost = parseFloat(btn.getAttribute('data-cost'));
             var cycle = btn.getAttribute('data-cycle') || 'monthly';
+            var category = btn.getAttribute('data-category') || 'Streaming';
             var exists = false;
             for (var j = 0; j < subscriptions.length; j++) {
                 if (subscriptions[j].name.toLowerCase() === name.toLowerCase()) { exists = true; break; }
             }
             if (exists) { showToast(name + ' already added', 'error'); return; }
             subscriptions.push({
-                name: name, originalCost: cost, cycle: cycle, monthlyCost: toMonthly(cost, cycle)
+                name: name, originalCost: cost, cycle: cycle,
+                monthlyCost: toMonthly(cost, cycle), category: category
             });
             saveSubscriptions();
             render();
@@ -275,6 +318,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Search filter
+    if (quickAddSearch) {
+        quickAddSearch.addEventListener('input', function() {
+            var query = this.value.toLowerCase().trim();
+            var btns = quickAddSection.querySelectorAll('.quick-add-btn');
+            for (var i = 0; i < btns.length; i++) {
+                var name = btns[i].getAttribute('data-name').toLowerCase();
+                btns[i].style.display = (!query || name.indexOf(query) !== -1) ? '' : 'none';
+            }
+        });
+    }
+
+    // Tab filter
+    var tabBtns = quickAddSection ? quickAddSection.querySelectorAll('.tab-btn') : [];
+    var currentTab = 'all';
+    for (var t = 0; t < tabBtns.length; t++) {
+        (function(tab) {
+            tab.addEventListener('click', function() {
+                var tabName = this.getAttribute('data-tab');
+                currentTab = tabName;
+                for (var i = 0; i < tabBtns.length; i++) tabBtns[i].classList.remove('active');
+                this.classList.add('active');
+                var btns = quickAddSection.querySelectorAll('.quick-add-btn');
+                for (var i = 0; i < btns.length; i++) {
+                    var cat = btns[i].getAttribute('data-category') || '';
+                    btns[i].style.display = (tabName === 'all' || cat === tabName) ? '' : 'none';
+                }
+            });
+        })(tabBtns[t]);
+    }
+
+    // FAQ toggle
     var faqItems = document.querySelectorAll('.faq-item');
     for (var i = 0; i < faqItems.length; i++) {
         (function(item) {
